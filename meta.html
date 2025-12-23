@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Surprise for You!</title>
+    <style>
+        /* General Setup */
+        body {
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0;
+            background: #fa70ae;
+            font-family: 'Helvetica Neue', sans-serif;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+        
+        /* All scene containers */
+        #login-container, #gift-box, #slideshow-container, #birthday-card {
+            position: absolute;
+            text-align: center;
+        }
+
+        /* --- NEW: Login Form Styles --- */
+        #login-container {
+            width: 350px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        #login-container h2 {
+            color: #d81b60;
+            margin-top: 0;
+        }
+        #password-input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        #error-message {
+            color: #d81b60;
+            font-weight: bold;
+            height: 20px; /* Reserve space to prevent layout shifts */
+        }
+        
+        /* Hide gift box by default */
+        #gift-box {
+            display: none;
+            cursor: pointer;
+            transition: transform 0.8s ease-in-out, opacity 00.5s ease-in-out;
+        }
+        #gift-box img { max-width: 400px; }
+
+        /* --- Button Styles --- */
+        .open-button {
+            display: inline-block; margin-top: 25px; padding: 12px 35px;
+            background-color: #ce78fd; color: #fff; font-size: 1.1em;
+            font-weight: bold; border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-out; border: none; cursor: pointer;
+        }
+        .open-button:hover { transform: scale(1.1); } /* Adjusted hover effect */
+
+        #gift-box.open { transform: rotateY(360deg) scale(2); opacity: 0; }
+
+        /* --- Slideshow Styles --- */
+        #slideshow-container { display: none; }
+        #slideshow-image {
+            max-width: 80vw; max-height: 70vh; border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            background: #fff; padding: 10px;
+        }
+
+        #reveal-button {
+            display: none;
+            transform: scale(1); /* Start at normal scale for consistency */
+            transition: transform 0.2s ease;
+        }
+
+        /* --- Birthday Card Styles --- */
+        #birthday-card {
+            display: none; width: 700px; padding: 10px;
+            background: #fff; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,1);
+            animation: fadeIn 1s ease-out;
+        }
+        .friend-photo {
+            width: 250px; height: 300px; border-radius: 100%;
+            object-fit: cover; border: 5px solid #f8bbd0;
+            margin-bottom: 20px;
+        }
+        #birthday-card h1 { font-size: 2.5em; color: #d81b60; }
+        #birthday-card p { color: #333; line-height: 1.5; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NEW Step 0: Login Form -->
+    <div id="login-container">
+        <h2>A Special Surprise Awaits!</h2>
+        <p> PASSWORD(21012007)</p>
+        <input type="password" id="password-input" placeholder="Password">
+        <p id="error-message"></p>
+        <button id="login-button" class="open-button">Unlock</button>
+    </div>
+
+    <!-- Step 1: Gift Box (now hidden) -->
+    <div id="gift-box">
+        <p><b><h1>Hi Sneha, there is a Surprise for You!!!</h1></b> </p>
+        <img src="GiftBox.png" alt="A gift box. Click to open!">
+        <p class="open-button">Open</p>
+    </div>
+
+    <!-- Step 2: Slideshow -->
+    <div id="slideshow-container">
+        <p><h1><b>HAPPY BIRTHDAY!!!</b></h1></p>
+        <img id="slideshow-image" src="" alt="A special memory">
+        <button id="reveal-button" class="open-button"><b>Show Wishes</b></button>
+    </div>
+
+    <!-- Step 3: The Card -->
+    <div id="birthday-card">
+        <img src="S1.jpg" alt="A photo of my best friend" class="friend-photo">
+        <h1>Happy Birthday To You<br> SNEHA!</h1>
+        <p>Wishing you the Happiest day forever. God Bless You. <br> Wish All Your Dreams Come True. <br>So grateful to have you as my best friend in my life! <br>Have a nice day<br><h3><b>Special Wishes From Vishwas!</b></h3> </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- CONFIGURATION ---
+            const correctPassword = "21012007"; // <-- CHANGE THIS to your secret password
+            const photos = ["S1.jpg", "S2.jpeg", "S3.jpeg", "S4.jpeg", "S5.jpeg"];
+            const photoTime = 900;
+
+            // --- ALL ELEMENTS ---
+            const loginContainer = document.getElementById('login-container');
+            const passwordInput = document.getElementById('password-input');
+            const loginButton = document.getElementById('login-button');
+            const errorMessage = document.getElementById('error-message');
+            const giftBox = document.getElementById('gift-box');
+            const slideshowContainer = document.getElementById('slideshow-container');
+            const slideshowImage = document.getElementById('slideshow-image');
+            const revealButton = document.getElementById('reveal-button');
+            const birthdayCard = document.getElementById('birthday-card');
+
+            // --- LOGIC ---
+            
+            // 0. Handle Login
+            loginButton.addEventListener('click', () => {
+                if (passwordInput.value === correctPassword) {
+                    loginContainer.style.display = 'none'; // Hide login form
+                    giftBox.style.display = 'block';      // Show gift box
+                } else {
+                    errorMessage.textContent = 'Incorrect Password. Try again!';
+                    passwordInput.value = ''; // Clear the input field
+                }
+            });
+
+            // 1. Open the gift
+            giftBox.addEventListener('click', () => {
+                giftBox.classList.add('open');
+                setTimeout(() => {
+                    giftBox.style.display = 'none';
+                    slideshowContainer.style.display = 'block';
+                    runSlideshow();
+                }, 800);
+            });
+
+            // 2. Run the slideshow
+            function runSlideshow() {
+                let photoIndex = 0;
+                if (photos.length === 0) { showRevealButton(); return; }
+                slideshowImage.src = photos[photoIndex];
+                const interval = setInterval(() => {
+                    photoIndex++;
+                    if (photoIndex < photos.length) {
+                        slideshowImage.src = photos[photoIndex];
+                    } else {
+                        clearInterval(interval);
+                        showRevealButton();
+                    }
+                }, photoTime);
+            }
+
+            // 3. Show the "Show Wishes" button
+            function showRevealButton() {
+                revealButton.style.display = 'inline-block';
+            }
+
+            // 4. Reveal the final birthday card
+            revealButton.addEventListener('click', () => {
+                slideshowContainer.style.display = 'none';
+                birthdayCard.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
